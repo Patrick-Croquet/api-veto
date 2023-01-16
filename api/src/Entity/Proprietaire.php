@@ -4,11 +4,13 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
 use App\Repository\ProprietaireRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -19,11 +21,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     normalizationContext: ['groups' => ['Proprietaire:read']],
     denormalizationContext: ['groups' => ['Proprietaire:write']],
+    paginationItemsPerPage: 10,
 )]
 #[GetCollection]
 #[Post]
 #[Get]
 #[Put]
+#[ApiFilter(OrderFilter::class, properties: ['id', 'nomProprietaire', 'prenomProprietaire'])]
+#[ApiFilter(PropertyFilter::class)]
 class Proprietaire
 {
     #[ORM\Id]
@@ -33,11 +38,12 @@ class Proprietaire
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[ApiFilter(SearchFilter::class, strategy: 'ipartial')]
+    #[ApiFilter(SearchFilter::class, strategy: 'ipartial')]    
     #[Groups(groups: ['Proprietaire:read', 'Proprietaire:write'])]
     private ?string $nomProprietaire = null;
 
     #[ORM\Column(length: 255)]
+    #[ApiFilter(SearchFilter::class, strategy: 'ipartial')]
     #[Groups(groups: ['Proprietaire:read', 'Proprietaire:write'])]
     private ?string $prenomProprietaire = null;
 
